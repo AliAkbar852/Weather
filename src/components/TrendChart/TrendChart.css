@@ -1,0 +1,74 @@
+/* TrendChart.css */
+.trend-chart-container {
+    grid-column: 1 / -1;
+    /* Span full width if inside grid */
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.trend-chart-container h3 {
+    margin-bottom: 1rem;
+    color: var(--text-sub);
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.trend-svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+/* Colors based on theme */
+:root {
+    --chart-color: #ffffff;
+}
+
+[data-theme='light'] {
+    --chart-color: #2c3e50;
+}
+
+[data-theme='dark'] {
+    --chart-color: #f1c40f;
+}
+
+/* Interactive Points */
+.data-point {
+    fill: var(--glass-bg);
+    stroke: var(--chart-color);
+    stroke-width: 2px;
+    cursor: pointer;
+    transition: r 0.2s;
+    opacity: 0;
+    /* Hidden by default */
+}
+
+.chart-wrapper:hover .data-point {
+    opacity: 1;
+    /* Show on hover context */
+}
+
+.data-point:hover {
+    r: 7;
+    fill: var(--chart-color);
+}
+
+/* Axis Labels */
+.chart-labels {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    height: 20px;
+    margin-top: 10px;
+}
+
+.chart-labels span {
+    position: absolute;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    color: var(--text-sub);
+    white-space: nowrap;
+}

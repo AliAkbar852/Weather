@@ -1,0 +1,155 @@
+:root {
+  /* Light Theme */
+  --bg-gradient-light: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+  --glass-light: rgba(255, 255, 255, 0.25);
+  --glass-border-light: rgba(255, 255, 255, 0.4);
+  --text-primary-light: #2c3e50;
+  --text-secondary-light: #596a7b;
+
+  /* Dark Theme */
+  --bg-gradient-dark: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  --glass-dark: rgba(255, 255, 255, 0.1);
+  --glass-border-dark: rgba(255, 255, 255, 0.2);
+  --text-primary-dark: #ecf0f1;
+  --text-secondary-dark: #bdc3c7;
+
+  /* Common */
+  --font-main: 'Inter', sans-serif;
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+  /* Defaults */
+  --bg-current: var(--bg-gradient-light);
+  --glass-bg: var(--glass-light);
+  --glass-border: var(--glass-border-light);
+  --text-main: var(--text-primary-light);
+  --text-sub: var(--text-secondary-light);
+}
+
+[data-theme='dark'] {
+  --bg-current: var(--bg-gradient-dark);
+  --glass-bg: var(--glass-dark);
+  --glass-border: var(--glass-border-dark);
+  --text-main: var(--text-primary-dark);
+  --text-sub: var(--text-secondary-dark);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-current);
+  color: var(--text-main);
+  min-height: 100vh;
+  transition: background 0.5s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 0 auto;
+}
+
+/* Glass Card Utility */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+}
+
+/* Dashboard Layout */
+.main-dashboard {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr;
+  gap: 2rem;
+  margin-top: 1rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.loading,
+.error {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+/* Error Handling */
+.error-container { text-align: center; padding: 3rem; margin-top: 2rem; color: var(--text-main); }
+.error-container h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+.retry-btn { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.8rem 2rem; border-radius: var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+.retry-btn:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-2px); }
+
+/* Animations */
+@keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); } 20%, 40%, 60%, 80% { transform: translateX(4px); } }
+.shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+/* App-wide micro-interactions */
+.app-container { animation: scaleUp 0.6s ease-out; }
+/* Staggered animation */
+.forecast-item { animation: slideInRight 0.5s ease-out backwards; }
+.forecast-item:nth-child(1) { animation-delay: 0.1s; }
+.forecast-item:nth-child(2) { animation-delay: 0.2s; }
+.forecast-item:nth-child(3) { animation-delay: 0.3s; }
+.forecast-item:nth-child(4) { animation-delay: 0.4s; }
+.forecast-item:nth-child(5) { animation-delay: 0.5s; }
