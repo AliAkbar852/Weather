@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getWeather, getForecast } from '../services/weatherService';
+import { getWeather, getForecast, getWeatherByCoords } from '../services/weatherService';
 
-export const useWeather = (initialCity = 'New York') => {
+export const useWeather = () => {
     const [data, setData] = useState({ weather: null, forecast: null });
-    const [status, setStatus] = useState('idle'); // idle, loading, success, error
+    const [status, setStatus] = useState('loading'); // Start loading immediately
     const [error, setError] = useState(null);
-    const [city, setCity] = useState(initialCity);
+    const [city, setCity] = useState(''); // Init empty
 
     const fetchWeather = useCallback(async (cityName) => {
         if (!cityName) return;
@@ -14,7 +14,6 @@ export const useWeather = (initialCity = 'New York') => {
         setError(null);
 
         try {
-            // Parallel fetch using the service (which handles caching primarily, but good to be explicit)
             const weatherData = await getWeather(cityName);
             const forecastData = await getForecast(cityName);
 
@@ -26,19 +25,57 @@ export const useWeather = (initialCity = 'New York') => {
         }
     }, []);
 
-    // Initial load
+    // Initial Load: Geolocation or Default
     useEffect(() => {
-        fetchWeather(city);
-    }, [city, fetchWeather]);
+        if (!navigator.geolocation) {
+            setCity('New York');
+            fetchWeather('New York');
+            return;
+        }
 
-    const retry = () => fetchWeather(city);
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    const { latitude, longitude } = position.coords;
+                    const fullData = await getWeatherByCoords(latitude, longitude);
+
+                    // Update State
+                    setData({ weather: fullData.current, forecast: fullData.forecast });
+                    setCity(fullData.city); // Update city input to match
+                    setStatus('success');
+                } catch (err) {
+                    console.error("Geolocation Weather Error:", err);
+                    setCity('New York');
+                    fetchWeather('New York'); // Fallback
+                }
+            },
+            (err) => {
+                console.warn("Geolocation denied/error:", err);
+                setCity('New York');
+                fetchWeather('New York'); // Fallback
+            }
+        );
+    }, []); // Run ONCE on mount
+
+    // Standard retry
+    const retry = () => {
+        if (city) fetchWeather(city);
+        else {
+            // If retry happens and no city, try default
+            setCity('New York');
+            fetchWeather('New York');
+        }
+    };
 
     return {
         weather: data.weather,
         forecast: data.forecast,
         status,
         error,
-        setCity,
+        setCity: (newCity) => {
+            setCity(newCity);
+            fetchWeather(newCity);
+        },
         retry,
         isLoading: status === 'loading'
     };

@@ -1,4 +1,4 @@
-import { getLocation, getWeatherData, mapOpenMeteoData } from './openMeteoApi';
+import { getLocation, getWeatherData, mapOpenMeteoData, getCityFromCoords } from './openMeteoApi';
 
 // Cache to store the last fetched data to avoid double calls for forecast vs current
 // Since our new API structure fetches everything in one go.
@@ -35,6 +35,28 @@ const fetchCompleteData = async (city) => {
     };
 
     return formattedData;
+};
+
+// Fetch by coordinates (Geolocation)
+export const getWeatherByCoords = async (lat, lon) => {
+    // 1. Get City Name (Reverse Geocoding)
+    const cityName = await getCityFromCoords(lat, lon);
+
+    // 2. Get Weather Data
+    const apiData = await getWeatherData(lat, lon);
+
+    // 3. Map Data
+    const location = { name: cityName, country: '', lat, lon };
+    const formattedData = mapOpenMeteoData(location, apiData);
+
+    // Update Cache (so subsequent renders use it)
+    weatherCache = {
+        city: cityName,
+        data: formattedData,
+        timestamp: Date.now()
+    };
+
+    return { ...formattedData, city: cityName }; // Return city name too
 };
 
 // Returns current weather data

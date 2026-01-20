@@ -40,6 +40,23 @@ export const getLocation = async (city) => {
 };
 
 /**
+ * Get city name from coordinates (Reverse Geocoding)
+ * @param {number} lat 
+ * @param {number} lon 
+ * @returns {Promise<string>} City name
+ */
+export const getCityFromCoords = async (lat, lon) => {
+    try {
+        const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+        const data = await response.json();
+        return data.city || data.locality || data.principalSubdivision || 'Unknown Location';
+    } catch (error) {
+        console.error("Reverse Geocoding Error:", error);
+        return "New York"; // Fallback
+    }
+};
+
+/**
  * Get full weather data (current + forecast)
  * @param {number} lat 
  * @param {number} lon 
